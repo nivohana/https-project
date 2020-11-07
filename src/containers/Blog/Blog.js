@@ -7,48 +7,55 @@ import './Blog.css';
 
 class Blog extends Component {
 
-    state={
-        posts:[],
-        selectedPost:null
+    state = {
+        posts: [],
+        selectedPost: null,
+        error: false
     }
-    
 
 
-    componentDidMount(){
+
+    componentDidMount() {
         axios.get('https://jsonplaceholder.typicode.com/posts')
             .then(response => {
-                const posts = response.data.slice(0,4)
-                const updatedPosts = posts.map(post =>{
+                const posts = response.data.slice(0, 4)
+                const updatedPosts = posts.map(post => {
                     return {
                         ...post,
-                        author:'Max'
+                        author: 'Max'
                     }
                 })
-                this.setState({posts:updatedPosts})
+                this.setState({ posts: updatedPosts })
             })
-        
+            .catch(error => {
+                this.setState({ error: true })
+            })
+
     }
 
-    
+
     selectPostHandler = (id) => {
-         this.setState({selectedPost:id})
+        this.setState({ selectedPost: id })
     };
 
 
 
-    render () {
-        const posts = this.state.posts.map(post => (
-            <Post 
-                key={post.id}
-                title={post.title} 
-                author={post.author}
-                show= {() => this.selectPostHandler(post.id)}    />
-        ))
+    render() {
+        let posts = <p style={{ textAlign: 'center' }}> You got an error!</p>
 
+        if (!this.state.error) {
+            posts = this.state.posts.map(post => (
+                <Post
+                    key={post.id}
+                    title={post.title}
+                    author={post.author}
+                    show={() => this.selectPostHandler(post.id)} />
+            ))
+        }
         return (
             <div>
                 <section className="Posts">
-                   {posts}
+                    {posts}
 
                 </section>
                 <section>
